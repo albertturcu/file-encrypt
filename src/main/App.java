@@ -38,14 +38,15 @@ public class App extends Application {
         // Symetric symetric = new Symetric();
         // SelectFile gui = new SelectFile();
 
+        // KeyStore store = KeyStoreUtil.createKeyStore(symetric.storePW);
+        // KeyStoreUtil.generateAndAddKey(store, symetric.SecretKeyPW);
+        // SecretKeySpec keyBytes = KeyStoreUtil.retrieveFromKeyStore(store);
+
         // System.out.println("Encrypt... ");
         // symetric.encrypt(keyBytes);
 
         // System.out.println("Decrypt... ");
         // symetric.decrypt(keyBytes);
-        // KeyStore store = KeyStoreUtil.createKeyStore(symetric.storePW);
-        // KeyStoreUtil.generateAndAddKey(store, symetric.SecretKeyPW);
-        // SecretKeySpec keyBytes = KeyStoreUtil.retrieveFromKeyStore(store);
 
         launch(App.class, args);
     }
@@ -53,67 +54,67 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         stage.setTitle("Select file for encryption");
+        Scene scene = new Scene(new MainWindow(stage));
+        stage.setScene(scene);
+        stage.show();
 
         // create password field
-        Label secretKeyPWFieldLabel = new Label("Secret Key Password");
-        PasswordField secretKeyPWField = new PasswordField();
+        // Label secretKeyPWFieldLabel = new Label("Secret Key Password");
+        // PasswordField secretKeyPWField = new PasswordField();
 
         // create a tile pane
-        TilePane tilePane = new TilePane();
-        tilePane.setAlignment(Pos.TOP_CENTER);
+        // TilePane tilePane = new TilePane();
+        // tilePane.setAlignment(Pos.TOP_CENTER);
 
-        // add textfield
-        tilePane.getChildren().add(secretKeyPWFieldLabel);
-        tilePane.getChildren().add(secretKeyPWField);
+        // // add textfield
+        // tilePane.getChildren().add(secretKeyPWFieldLabel);
+        // tilePane.getChildren().add(secretKeyPWField);
 
         // create decrypt/encrypt buttons
-        FileSelectButton buttonEncrypt = new FileSelectButton("./", 0);
-        buttonEncrypt.setPrefSize(120, 30);
-        buttonEncrypt.setDisable(true);
-        buttonEncrypt.setAlignment(Pos.CENTER);
+        // FileSelectButton buttonEncrypt = new FileSelectButton("./", 0);
+        // buttonEncrypt.setPrefSize(120, 30);
+        // buttonEncrypt.setDisable(true);
+        // buttonEncrypt.setAlignment(Pos.CENTER);
 
-        buttonEncrypt.setOnAction(action -> {
-            System.out.println(secretKeyPWField.getText());
-        });
+        // buttonEncrypt.setOnAction(action -> {
+        // System.out.println(secretKeyPWField.getText());
+        // });
 
-        FileSelectButton buttonDecrypt = new FileSelectButton("./", 1);
-        buttonDecrypt.setPrefSize(120, 30);
-        buttonDecrypt.setDisable(true);
-        buttonEncrypt.setAlignment(Pos.CENTER);
+        // FileSelectButton buttonDecrypt = new FileSelectButton("./", 1);
+        // buttonDecrypt.setPrefSize(120, 30);
+        // buttonDecrypt.setDisable(true);
+        // buttonEncrypt.setAlignment(Pos.CENTER);
 
         // on key press
         // enable encrypt/decrypt buttons
-        secretKeyPWField.setOnKeyPressed(e -> {
-            if (e.getText().length() > 0) {
-                secretKeyPW = secretKeyPW + e.getText();
-            } else {
-                secretKeyPW = secretKeyPW.substring(0, secretKeyPW.length() - 1);
-            }
+        // secretKeyPWField.setOnKeyPressed(e -> {
+        // if (e.getText().length() > 0) {
+        // secretKeyPW = secretKeyPW + e.getText();
+        // } else {
+        // secretKeyPW = secretKeyPW.substring(0, secretKeyPW.length() - 1);
+        // }
 
-            if (secretKeyPW.length() > 0) {
-                buttonEncrypt.setDisable(false);
-                buttonDecrypt.setDisable(false);
-            } else if (secretKeyPW.length() == 0) {
-                buttonEncrypt.setDisable(true);
-                buttonDecrypt.setDisable(true);
-            }
-        });
+        // if (secretKeyPW.length() > 0) {
+        // buttonEncrypt.setDisable(false);
+        // buttonDecrypt.setDisable(false);
+        // } else if (secretKeyPW.length() == 0) {
+        // buttonEncrypt.setDisable(true);
+        // buttonDecrypt.setDisable(true);
+        // }
+        // });
 
         // add encrypt/decrypt buttons on hBox
-        HBox hBox = new HBox();
-        hBox.getChildren().add(buttonEncrypt);
-        hBox.getChildren().add(buttonDecrypt);
-        hBox.setAlignment(Pos.TOP_CENTER);
+        // HBox hBox = new HBox();
+        // hBox.getChildren().add(buttonEncrypt);
+        // hBox.getChildren().add(buttonDecrypt);
+        // hBox.setAlignment(Pos.TOP_CENTER);
 
         // put everything together on scene
-        VBox vBox = new VBox();
-        vBox.setAlignment(Pos.CENTER);
-        vBox.getChildren().add(tilePane);
-        vBox.getChildren().add(hBox);
+        // VBox vBox = new VBox();
+        // vBox.setAlignment(Pos.CENTER);
+        // vBox.getChildren().add(tilePane);
+        // vBox.getChildren().add(hBox);
 
-        Scene scene = new Scene(vBox, 250, 250);
-        stage.setScene(scene);
-        stage.show();
     }
 }
 

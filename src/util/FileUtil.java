@@ -75,11 +75,12 @@ public class FileUtil {
     public static String getIV(String transformation, String plaintextFileName) {
         String iv = "";
         String[] parts = transformation.split("/");
+
         if (parts.length == 3 && parts[0].equals("AES") && parts[1].equals("CBC")) {
             String[] partsFileName = plaintextFileName.split("/");
             String filename = partsFileName[partsFileName.length - 1];
             String[] p = filename.split("\\.");
-            iv = p[2];
+            iv = p[1];
         }
 
         return iv;

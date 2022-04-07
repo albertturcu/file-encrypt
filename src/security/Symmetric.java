@@ -8,24 +8,45 @@ import org.bouncycastle.util.encoders.Hex;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.Cipher;
 
+import java.security.KeyStore;
 import java.security.SecureRandom;
+import java.util.Base64;
 
 // util
 import util.FileUtil;
+import util.KeyStoreUtil;
 
 public class Symmetric {
     String pdfFile = "RA059U_Albert";
     String dir = new File("").getAbsolutePath();
     String plaintextFileName = dir + "/" + pdfFile + "." + "pdf",
             testFile = dir + "/" + pdfFile + "_" + "test" + "." + "pdf";
-    // pass for key value in store ( needs to be provided by user )
-    public char[] storePW;
+
+    private char[] storePW;
+    private KeyStore store;
+
+    public final static byte ENCRYPT_MODE = 0;
+    public final static byte DECRYPT_MODE = 1;
 
     public Symmetric() {
         storePW = "pizza".toCharArray();
+        store = KeyStoreUtil.createKeyStore(storePW);
     }
 
-    public void encrypt(SecretKeySpec key) {
+    private SecretKeySpec getEncryptionKey(char[] secretKeyPW) {
+        KeyStoreUtil.generateAndAddKey(store, secretKeyPW);
+
+        return KeyStoreUtil.retrieveFromKeyStore(store, secretKeyPW);
+    }
+
+    public void encrypt(String plaintextFileName, char[] secretKeyPW) {
+        System.out.println("encrypt plaintextFileName: " + plaintextFileName);
+        System.out.println("encrypt secretKeyPW: " + new String(secretKeyPW));
+        // SecretKeySpec key = this.getEncryptionKey(secretKeyPW);
+        KeyStoreUtil.generateAndAddKey(store, secretKeyPW);
+        var key = KeyStoreUtil.retrieveFromKeyStore(store, secretKeyPW);
+
+        System.out.println("encrypt storedKey: " + Base64.getEncoder().encodeToString(key.getEncoded()));
         byte[] iv = new byte[16];
         try {
             SecureRandom secureRandom = SecureRandom.getInstance("DEFAULT", "BC");
@@ -46,18 +67,25 @@ public class Symmetric {
         }
     }
 
-    public void decrypt(SecretKeySpec key) {
+    public void decrypt(String plaintextFileName, char[] secretKeyPW) {
+        System.out.println("decrypt plaintextFileName: " + plaintextFileName);
+        System.out.println("decrypt secretKeyPW: " + new String(secretKeyPW));
+        // SecretKeySpec key = this.getEncryptionKey(secretKeyPW);
+        var key = KeyStoreUtil.retrieveFromKeyStore(store, secretKeyPW);
+
+        System.out.println("decrypt storedKey: " + Base64.getEncoder().encodeToString(key.getEncoded()));
         try {
             // Reading
             String ivString = FileUtil.getIV("AES/CBC/PKCS5Padding", plaintextFileName);
             IvParameterSpec iv = new IvParameterSpec(Hex.decode(ivString));
 
             byte[] input = FileUtil.readAllBytes("AES/CBC/PKCS5Padding", plaintextFileName);
+
             // Decrypting
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "BC");
-
             cipher.init(Cipher.DECRYPT_MODE, key, iv);
             byte[] output = cipher.doFinal(input);
+
             // Writing
             FileUtil.write(testFile, output);
 

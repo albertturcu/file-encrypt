@@ -48,7 +48,6 @@ public class KeyStoreUtil {
 
             KeyStore.SecretKeyEntry entry = new KeyStore.SecretKeyEntry(key);
             KeyStore.ProtectionParameter protection = new KeyStore.PasswordProtection(secretKeyPW);
-
             store.setEntry("key", entry, protection);
         } catch (Exception e) {
             e.printStackTrace();
@@ -59,14 +58,7 @@ public class KeyStoreUtil {
         SecretKeySpec key = null;
 
         try {
-            // getting key
-            // System.out.print("KeyStore: please type key password: ");
-            // Scanner scanner = new Scanner(System.in);
-            // char[] pw = scanner.nextLine().toCharArray();
-            // scanner.close();
-
             key = (SecretKeySpec) store.getKey("key", pw);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
