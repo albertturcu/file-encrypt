@@ -13,7 +13,7 @@ public class FileUtil {
         } catch (Exception e) {
         }
 
-        return bytesRead; // returns {} if file does not exist
+        return bytesRead;
     }
 
     // read file that is aes encrypted
@@ -80,9 +80,23 @@ public class FileUtil {
             String[] partsFileName = plaintextFileName.split("/");
             String filename = partsFileName[partsFileName.length - 1];
             String[] p = filename.split("\\.");
-            iv = p[1];
+            iv = p[p.length - 2];
         }
 
         return iv;
+    }
+
+    public static String removeIvFromPathFilename(String plaintextFileName) {
+        String[] partsFileName = plaintextFileName.split("/");
+        String filename = partsFileName[partsFileName.length - 1];
+        String[] p = filename.split("\\.");
+
+        if (p.length <= 3) {
+            return p[0] + "-decrypted";
+        } else if (p.length > 3) {
+            return p[0] + "-decrypted" + "." + p[1];
+        }
+
+        return "";
     }
 }

@@ -9,26 +9,26 @@ import java.util.Scanner;
 import javax.crypto.spec.SecretKeySpec;
 
 public class KeyStoreUtil {
-    public static KeyStore createKeyStore(char[] storePW) {
-        System.out.println("OPEN STORE... ");
+    private KeyStore ks;
+    private char[] storePW = "pizza".toCharArray();
+    private String storeFileName = "appKeyStore.bks";
 
-        String storeFileName = "appKeyStore.bks";
+    public KeyStoreUtil() {
+    }
 
-        KeyStore ks = null;
+    public KeyStore openKeyStore() {
         try {
-            ks = KeyStore.getInstance("BKS", "BC");
-            FileInputStream fis = new FileInputStream(storeFileName);
-            ks.load(fis, storePW);
+            this.ks = KeyStore.getInstance("BKS", "BC");
+            FileInputStream fis = new FileInputStream(this.storeFileName);
+            this.ks.load(fis, this.storePW);
             fis.close();
         } catch (Exception e) {
-            System.out.println("STORE NOT EXISTING... ");
             try {
-                System.out.println("GENERATE STORE... ");
-                ks = KeyStore.getInstance("BKS", "BC");
-                ks.load(null, storePW);
+                this.ks = KeyStore.getInstance("BKS", "BC");
+                this.ks.load(null, this.storePW);
 
-                try (FileOutputStream fos = new FileOutputStream(storeFileName)) {
-                    ks.store(fos, storePW);
+                try (FileOutputStream fos = new FileOutputStream(this.storeFileName)) {
+                    this.ks.store(fos, this.storePW);
                 }
             } catch (Exception e2) {
                 e2.printStackTrace();
@@ -37,8 +37,7 @@ public class KeyStoreUtil {
         return ks;
     }
 
-    public static void generateAndAddKey(KeyStore store, char[] secretKeyPW) {
-        System.out.println("Generate and add key...");
+    public void generateAndAddKey(KeyStore store, char[] secretKeyPW) {
         try {
             SecureRandom secureRandom = SecureRandom.getInstance("DEFAULT", "BC");
             byte[] keyBytes = new byte[32];
@@ -49,6 +48,10 @@ public class KeyStoreUtil {
             KeyStore.SecretKeyEntry entry = new KeyStore.SecretKeyEntry(key);
             KeyStore.ProtectionParameter protection = new KeyStore.PasswordProtection(secretKeyPW);
             store.setEntry("key", entry, protection);
+
+            try (FileOutputStream fos = new FileOutputStream(this.storeFileName)) {
+                this.ks.store(fos, this.storePW);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

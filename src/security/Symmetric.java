@@ -1,7 +1,5 @@
 package security;
 
-import javax.crypto.spec.SecretKeySpec;
-
 import java.io.File;
 
 import org.bouncycastle.util.encoders.Hex;
@@ -17,34 +15,19 @@ import util.FileUtil;
 import util.KeyStoreUtil;
 
 public class Symmetric {
-    String pdfFile = "RA059U_Albert";
-    String dir = new File("").getAbsolutePath();
-    String plaintextFileName = dir + "/" + pdfFile + "." + "pdf",
-            testFile = dir + "/" + pdfFile + "_" + "test" + "." + "pdf";
-
-    private char[] storePW;
+    private KeyStoreUtil ksUtil = new KeyStoreUtil();
     private KeyStore store;
 
     public final static byte ENCRYPT_MODE = 0;
     public final static byte DECRYPT_MODE = 1;
 
     public Symmetric() {
-        storePW = "pizza".toCharArray();
-        store = KeyStoreUtil.createKeyStore(storePW);
-    }
-
-    private SecretKeySpec getEncryptionKey(char[] secretKeyPW) {
-        KeyStoreUtil.generateAndAddKey(store, secretKeyPW);
-
-        return KeyStoreUtil.retrieveFromKeyStore(store, secretKeyPW);
+        store = ksUtil.openKeyStore();
     }
 
     public void encrypt(String plaintextFileName, char[] secretKeyPW) {
-        System.out.println("encrypt plaintextFileName: " + plaintextFileName);
-        System.out.println("encrypt secretKeyPW: " + new String(secretKeyPW));
-        // SecretKeySpec key = this.getEncryptionKey(secretKeyPW);
-        KeyStoreUtil.generateAndAddKey(store, secretKeyPW);
-        var key = KeyStoreUtil.retrieveFromKeyStore(store, secretKeyPW);
+        ksUtil.generateAndAddKey(this.store, secretKeyPW);
+        var key = KeyStoreUtil.retrieveFromKeyStore(this.store, secretKeyPW);
 
         System.out.println("encrypt storedKey: " + Base64.getEncoder().encodeToString(key.getEncoded()));
         byte[] iv = new byte[16];
@@ -68,15 +51,12 @@ public class Symmetric {
     }
 
     public void decrypt(String plaintextFileName, char[] secretKeyPW) {
-        System.out.println("decrypt plaintextFileName: " + plaintextFileName);
-        System.out.println("decrypt secretKeyPW: " + new String(secretKeyPW));
-        // SecretKeySpec key = this.getEncryptionKey(secretKeyPW);
-        var key = KeyStoreUtil.retrieveFromKeyStore(store, secretKeyPW);
+        var key = KeyStoreUtil.retrieveFromKeyStore(this.store, secretKeyPW);
 
-        System.out.println("decrypt storedKey: " + Base64.getEncoder().encodeToString(key.getEncoded()));
         try {
             // Reading
             String ivString = FileUtil.getIV("AES/CBC/PKCS5Padding", plaintextFileName);
+            System.out.println("decrypt ivString: " + ivString);
             IvParameterSpec iv = new IvParameterSpec(Hex.decode(ivString));
 
             byte[] input = FileUtil.readAllBytes("AES/CBC/PKCS5Padding", plaintextFileName);
@@ -86,8 +66,9 @@ public class Symmetric {
             cipher.init(Cipher.DECRYPT_MODE, key, iv);
             byte[] output = cipher.doFinal(input);
 
+            String outputFileName = FileUtil.removeIvFromPathFilename(plaintextFileName);
             // Writing
-            FileUtil.write(testFile, output);
+            FileUtil.write(outputFileName, output);
 
             // Delete old file
             File oldFile = new File(plaintextFileName);

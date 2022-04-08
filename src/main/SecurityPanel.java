@@ -16,12 +16,14 @@ public class SecurityPanel extends VBox {
     protected Stage encryptStage;
     protected TextField pathTextField;
     protected Button selectButton;
-    protected Byte security;
+    protected Byte securityMode;
+    protected Symmetric securityControl;
 
-    public SecurityPanel(Stage encryptStage, Byte security) {
+    public SecurityPanel(Stage encryptStage, Byte securityMode, Symmetric securityControl) {
         super();
         this.encryptStage = encryptStage;
-        this.security = security;
+        this.securityMode = securityMode;
+        this.securityControl = securityControl;
         createPathTextField();
         createSelectButton();
         createWindow();
@@ -55,10 +57,11 @@ public class SecurityPanel extends VBox {
         path.getChildren().addAll(pathTextField, selectButton);
         path.setSpacing(30);
 
-        Button symmetric = new Button(this.security == Symmetric.ENCRYPT_MODE ? "Encrypt" : "Decrypt");
+        Button symmetric = new Button(this.securityMode == Symmetric.ENCRYPT_MODE ? "Encrypt" : "Decrypt");
         symmetric.setPrefSize(120, 30);
         // symmetric.setDisable(true);
-        symmetric.setOnAction(event -> new PasswordWindow(pathTextField.getText(), this.security));
+        symmetric.setOnAction(
+                event -> new PasswordWindow(pathTextField.getText(), this.securityMode, this.securityControl));
 
         getChildren().addAll(path, symmetric);
         setSpacing(30);

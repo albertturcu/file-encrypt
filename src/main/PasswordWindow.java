@@ -24,12 +24,14 @@ public class PasswordWindow extends Stage {
     private Button okButton;
 
     private String path;
-    private byte mode;
+    private byte securityMode;
+    private Symmetric securityControl;
 
-    public PasswordWindow(String path, byte mode) {
+    public PasswordWindow(String path, byte securityMode, Symmetric securityControl) {
         super();
         this.path = path;
-        this.mode = mode;
+        this.securityMode = securityMode;
+        this.securityControl = securityControl;
         createPasswordTextField();
         createOkButton();
         createWindow();
@@ -58,14 +60,13 @@ public class PasswordWindow extends Stage {
     }
 
     private void createOkButton() {
-        okButton = new Button(mode == 0 ? "Encrypt" : "Decrypt");
+        okButton = new Button(this.securityMode == 0 ? "Encrypt" : "Decrypt");
         okButton.setOnAction(event -> {
-            Symmetric s = new Symmetric();
 
-            if (mode == 0) {
-                s.encrypt(path, passwordTextField.getText().toCharArray());
-            } else if (mode == 1) {
-                s.decrypt(path, passwordTextField.getText().toCharArray());
+            if (this.securityMode == 0) {
+                this.securityControl.encrypt(path, passwordTextField.getText().toCharArray());
+            } else if (this.securityMode == 1) {
+                this.securityControl.decrypt(path, passwordTextField.getText().toCharArray());
             }
             close();
         });
@@ -80,12 +81,11 @@ public class PasswordWindow extends Stage {
         root.setAlignment(Pos.CENTER);
 
         Scene scene = new Scene(root);
-        // scene.getStylesheets().add(getClass().getResource(".." + File.separator +
-        // "styles" + File.separator + "Style.css").toExternalForm());
+
         setScene(scene);
         setResizable(false);
         initModality(Modality.APPLICATION_MODAL);
-        setTitle("FileEncryption - " + (mode == 0 ? "Encrypt" : "Decrypt"));
+        setTitle("FileEncryption - " + (this.securityMode == 0 ? "Encrypt" : "Decrypt"));
         show();
     }
 }
