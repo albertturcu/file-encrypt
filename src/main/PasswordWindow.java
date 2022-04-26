@@ -14,9 +14,6 @@ import javafx.stage.Stage;
 import security.Symmetric;
 
 public class PasswordWindow extends Stage {
-
-    private final static String ALLOWED_SYMBOLS = "|\\!\"@#£$§%€&/{([)]=}?'»«*+ªº_-:.;,><";
-
     public final static int GENERAL_SPACING = 30;
     public final static int GENERAL_PADDING = 30;
 
@@ -43,20 +40,6 @@ public class PasswordWindow extends Stage {
         passwordTextField.setPromptText("Password");
         passwordTextField.setAlignment(Pos.CENTER);
         passwordTextField.setMaxWidth(150);
-    }
-
-    private static boolean isPasswordValid(String password) {
-        if (password.length() > 16 || password.length() < 3) {
-            return false;
-        }
-        int legalChars = 0;
-        for (int i = 0; i < password.length(); i++) {
-            if (Character.isAlphabetic(password.charAt(i)) || Character.isDigit(password.charAt(i))
-                    || ALLOWED_SYMBOLS.contains(String.valueOf(password.charAt(i)))) {
-                legalChars++;
-            }
-        }
-        return legalChars == password.length();
     }
 
     private void createOkButton() {

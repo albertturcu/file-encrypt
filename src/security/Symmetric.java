@@ -8,7 +8,6 @@ import javax.crypto.Cipher;
 
 import java.security.KeyStore;
 import java.security.SecureRandom;
-import java.util.Base64;
 
 // util
 import util.FileUtil;
@@ -29,7 +28,6 @@ public class Symmetric {
         ksUtil.generateAndAddKey(this.store, secretKeyPW);
         var key = KeyStoreUtil.retrieveFromKeyStore(this.store, secretKeyPW);
 
-        System.out.println("encrypt storedKey: " + Base64.getEncoder().encodeToString(key.getEncoded()));
         byte[] iv = new byte[16];
         try {
             SecureRandom secureRandom = SecureRandom.getInstance("DEFAULT", "BC");
@@ -56,7 +54,6 @@ public class Symmetric {
         try {
             // Reading
             String ivString = FileUtil.getIV("AES/CBC/PKCS5Padding", plaintextFileName);
-            System.out.println("decrypt ivString: " + ivString);
             IvParameterSpec iv = new IvParameterSpec(Hex.decode(ivString));
 
             byte[] input = FileUtil.readAllBytes("AES/CBC/PKCS5Padding", plaintextFileName);

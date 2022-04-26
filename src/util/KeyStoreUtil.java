@@ -4,13 +4,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.security.KeyStore;
 import java.security.SecureRandom;
-import java.util.Scanner;
-
 import javax.crypto.spec.SecretKeySpec;
 
 public class KeyStoreUtil {
     private KeyStore ks;
-    private char[] storePW = "pizza".toCharArray();
+    private char[] storePW = "storePass".toCharArray();
     private String storeFileName = "appKeyStore.bks";
 
     public KeyStoreUtil() {
